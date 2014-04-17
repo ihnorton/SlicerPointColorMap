@@ -1,10 +1,10 @@
 from __main__ import vtk, qt, ctk, slicer
 
 #
-# PointColorMap2
+# PointColorMap
 #
 
-class PointColorMap2:
+class PointColorMap:
   def __init__(self, parent):
     parent.title = "Marked Point Color Data"
     parent.categories = ["Examples"]
@@ -19,10 +19,10 @@ class PointColorMap2:
     self.parent = parent
 
 #
-# qPointColorMap2Widget
+# qPointColorMapWidget
 #
 
-class PointColorMap2Widget:
+class PointColorMapWidget:
   def __init__(self, parent = None):
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -43,7 +43,7 @@ class PointColorMap2Widget:
     #  your module to users)
     self.reloadButton = qt.QPushButton("Reload")
     self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "PointColorMap2 Reload"
+    self.reloadButton.name = "PointColorMap Reload"
     self.layout.addWidget(self.reloadButton)
     self.reloadButton.connect('clicked()', self.onReload)
 
@@ -51,8 +51,8 @@ class PointColorMap2Widget:
     # Annotation Node Selector
     self.aLS = slicer.qMRMLNodeComboBox()
     self.aLS.setMRMLScene(slicer.mrmlScene)
-    self.aLS.nodeTypes = (["vtkMRMLAnnotationHierarchyNode"])
-    self.aLS.connect('currentNodeChanged(vtkMRMLNode*)', self.setAnnotationListNode)
+    self.aLS.nodeTypes = (["vtkMRMLMarkupsFiducial"])
+    self.aLS.connect('currentNodeChanged(vtkMRMLNode*)', self.setMarkupListNode)
     self.layout.addWidget(self.aLS)
 
     # ColorMap selector
@@ -238,7 +238,7 @@ class PointColorMap2Widget:
         tdn.SetTextScale(0)
       fiduNode.Modified()
 
-  def onReload(self,moduleName="PointColorMap2"):
+  def onReload(self,moduleName="PointColorMap"):
     """Generic reload method for any scripted module.
     ModuleWizard will subsitute correct default moduleName.
     """
