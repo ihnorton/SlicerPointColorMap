@@ -48,10 +48,10 @@ class PointColorMapWidget:
     self.reloadButton.connect('clicked()', self.onReload)
 
 
-    # Annotation Node Selector
+    # MarkupsFiducial Node Selector
     self.aLS = slicer.qMRMLNodeComboBox()
     self.aLS.setMRMLScene(slicer.mrmlScene)
-    self.aLS.nodeTypes = (["vtkMRMLMarkupsFiducial"])
+    self.aLS.nodeTypes = (["vtkMRMLMarkupsFiducialNode"])
     self.aLS.connect('currentNodeChanged(vtkMRMLNode*)', self.setMarkupListNode)
     self.layout.addWidget(self.aLS)
 
@@ -121,7 +121,7 @@ class PointColorMapWidget:
     self.layout.addWidget(self.tdCB)
 
 
-  def setAnnotationListNode(self, newNode):
+  def setMarkupListNode(self, newNode):
     self.listNode = newNode
     self.updateList()
 
@@ -142,15 +142,14 @@ class PointColorMapWidget:
     self.plViewModel.clear() 
     self.plView.setModel(self.plViewModel)
     
-    numNodes = self.listNode.GetNumberOfChildrenNodes()
+    numNodes = self.listNode.GetNumberOfFiducials()
     actRow = 0
     for i in xrange(0,numNodes):
-      annoNode = self.listNode.GetNthChildNode(i)
-      fiduNode = annoNode.GetAssociatedNode()
-      if ( ( fiduNode.IsA('vtkMRMLAnnotationFiducialNode') == 0)
-        or (fiduNode.GetVisible() == 0)):
+      #annoNode = self.listNode.GetNthChildNode(i)
+      #fiduNode = annoNode.GetAssociatedNode()
+      if (self.listNode.GetNthFiducialVisibility(i) == False):
         continue
-      fiduNodeName = fiduNode.GetName()
+      fiduNodeName = self.listNode.GetNthFiducialLabel(i)
 
       labelItem = qt.QStandardItem()
       labelItem.setText( str(fiduNodeName) )
@@ -163,7 +162,7 @@ class PointColorMapWidget:
       actRow += 1
 
       # need to keep items so they don't go out of scope...
-      self.fiduNodes[fiduNodeName] = [fiduNode.GetID(), labelItem, entryItem, colorItem]
+      self.fiduNodes[fiduNodeName] = [self.listNode.GetNthMarkupID(), labelItem, entryItem, colorItem]
     self.plViewModel.setHeaderData(0, 1, "Sample")
     self.plViewModel.setHeaderData(1, 1, "Value")
     self.plViewModel.setHeaderData(2, 1, "Color")
